@@ -20,10 +20,9 @@ static_resources:
                     routes:
                       - match:
                           prefix: "/"
-                        direct_response:
-                          status: 200
-                          body:
-                            inline_string: "Project: github.com/troydai/envoy-filter-wasm-filter"
+                        route:
+                          cluster: go-httpbin
+                          timeout: 10s
               http_filters:
                 # - name: envoy.filters.http.wasm
                 #   typed_config:
@@ -40,3 +39,17 @@ static_resources:
                 - name: envoy.filters.http.router
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+  clusters:
+    - name: go-httpbin
+      connect_timeout: 0.25s
+      type: LOGICAL_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: go-httpbin
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: go-httpbin
+                      port_value: 8081

@@ -9,5 +9,14 @@ services:
       - ./target/wasm32-wasi/release:/etc/envoy/proxy-wasm-plugins
     networks:
       - envoymesh
+  go-httpbin:
+    image: mccutchen/go-httpbin
+    hostname: go-httpbin
+    ports:
+      - "8081:8081"
+    networks:
+      - envoymesh
+    environment:
+      - PORT=8081
 networks:
   envoymesh: {}
